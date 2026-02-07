@@ -1,106 +1,143 @@
 # Reflection – Clean Code & Secure Coding Practices
 
-Refleksi ini dibuat berdasarkan proses pengerjaan tutorial dan exercise Spring Boot EShop.
----
-
-## Clean Code Practices yang Terlihat
-
-### 1. Struktur Project Mengikuti MVC
-Pembagian package menjadi `controller`, `service`, `repository`, dan `model` sangat membantu menjaga kode tetap rapi.  
-Setiap layer punya peran jelas:
-- **Controller** fokus ke request dan response
-- **Service** fokus ke business logic
-- **Repository** fokus ke pengelolaan data
-- **Model** merepresentasikan domain (Product)
-
-Dengan struktur ini, alur aplikasi lebih mudah dipahami dan perubahan di satu layer tidak terlalu berdampak ke layer lain.
+Refleksi ini ditulis berdasarkan pengalaman mengerjakan tutorial dan exercise **Spring Boot EShop**, khususnya dalam menerapkan prinsip **Clean Code** dan **Secure Coding Practices**.
 
 ---
 
-### 2. Penamaan Class dan Method Konsisten
-Nama class dan method mengikuti apa yang diajarkan di tutorial dan cukup deskriptif, seperti:
-- `ProductService`, `ProductServiceImpl`
-- `ProductRepository`
-- `create`, `findAll`, `findById`
+## Clean Code Practices yang Diterapkan
 
-Ini bikin kode lebih readable dan tidak perlu banyak komentar tambahan.
+### 1. Struktur Project Mengikuti Pola MVC
+
+Struktur project dibagi ke dalam beberapa package seperti `controller`, `service`, `repository`, dan `model`. Pembagian ini membuat kode lebih rapi dan mudah dipahami karena setiap layer memiliki tanggung jawab yang jelas:
+
+* **Controller** menangani request dan response dari client
+* **Service** berisi business logic
+* **Repository** bertugas mengelola data
+* **Model** merepresentasikan entitas domain (Product)
+
+Dengan struktur seperti ini, alur aplikasi menjadi lebih jelas dan perubahan pada satu layer tidak langsung berdampak ke layer lainnya.
 
 ---
 
-### 3. Kode Dibangun Bertahap Sesuai Fitur
-Pengembangan dilakukan per-branch (`list-product`, `edit-product`, `delete-product`).  
-Pendekatan ini membantu fokus ke satu fitur dalam satu waktu dan memudahkan debugging ketika ada error.
+### 2. Penamaan Class dan Method yang Konsisten
+
+Penamaan class dan method mengikuti fungsinya secara langsung, misalnya:
+
+* `ProductService`, `ProductServiceImpl`
+* `ProductRepository`
+* `create`, `findAll`, `findById`
+
+Penamaan yang deskriptif ini meningkatkan keterbacaan kode dan mengurangi kebutuhan akan komentar tambahan.
+
+---
+
+### 3. Pengembangan Fitur Secara Bertahap
+
+Pengembangan dilakukan menggunakan branch terpisah untuk setiap fitur, seperti `list-product`, `edit-product`, dan `delete-product`.
+Pendekatan ini membantu fokus pada satu fitur dalam satu waktu dan mempermudah proses debugging ketika terjadi error.
 
 ---
 
 ## Masalah yang Ditemui Selama Pengembangan
 
-### 1. Kontrak Antar Layer Tidak Konsisten
+### 1. Ketidakkonsistenan Kontrak Antar Layer
+
 Masalah paling terasa muncul saat menambahkan fitur **edit** dan **delete**.
 
-Di `ProductService`, sudah ada method seperti:
-- `findById`
-- `update`
-- `deleteById`
+Di layer `ProductService` sudah terdapat method seperti:
 
-Namun di `ProductRepository`, method tersebut belum ada.  
-Akibatnya muncul error seperti:
-- `cannot find symbol`
-- `does not override abstract method`
+* `findById`
+* `update`
+* `deleteById`
 
-Ini menunjukkan bahwa perubahan di service tidak diikuti oleh repository.
+Namun method tersebut belum tersedia di `ProductRepository`, sehingga muncul error seperti:
 
-**Perbaikan:**  
-Pastikan setiap method yang dipanggil oleh service memang tersedia di repository, dan namanya konsisten.
+* `cannot find symbol`
+* `does not override abstract method`
+
+Hal ini menunjukkan bahwa perubahan di service tidak diiringi dengan penyesuaian di repository.
+
+**Solusi:**
+Pastikan setiap method yang didefinisikan di service memiliki implementasi yang sesuai dan konsisten di repository.
 
 ---
 
-### 2. Repository Masih Terlalu Sederhana
-Repository masih menggunakan `List<Product>` tanpa validasi:
-- Tidak ada pengecekan ID unik
-- Update dan delete bisa dilakukan tanpa memastikan data benar-benar ada
+### 2. Implementasi Repository yang Terlalu Sederhana
 
-Walaupun ini masih sesuai dengan tahap tutorial (belum pakai database), hal ini bisa berbahaya kalau diterapkan di aplikasi nyata.
+Repository masih menggunakan `List<Product>` tanpa validasi tambahan:
 
-**Perbaikan:**  
+* Tidak ada pengecekan ID unik
+* Update dan delete bisa dilakukan tanpa memastikan data benar-benar ada
+
+Meskipun masih sesuai dengan tahap tutorial (belum menggunakan database), pendekatan ini berisiko jika diterapkan di aplikasi nyata.
+
+**Solusi:**
 Tambahkan validasi sederhana, misalnya:
-- Cek ID sebelum update/delete
-- Kembalikan `null` atau `Optional<Product>` jika data tidak ditemukan
+
+* Mengecek keberadaan ID sebelum update atau delete
+* Mengembalikan `Optional<Product>` atau `null` jika data tidak ditemukan
 
 ---
 
-### 3. Minim Error Handling
-Jika product dengan ID tertentu tidak ditemukan, alur aplikasi belum menangani kondisi tersebut secara eksplisit.  
-Hal ini bisa menyebabkan bug tersembunyi atau error runtime.
+### 3. Minimnya Error Handling
 
-**Perbaikan:**  
-Tambahkan handling di service layer agar kondisi gagal tetap aman dan terkontrol.
+Jika product dengan ID tertentu tidak ditemukan, alur aplikasi belum menangani kondisi tersebut secara eksplisit.
+Hal ini berpotensi menimbulkan bug tersembunyi atau error saat runtime.
+
+**Solusi:**
+Tambahkan handling di layer service agar kondisi gagal tetap aman dan terkontrol.
 
 ---
 
-## Secure Coding Practices yang Sudah Ada
+## Secure Coding Practices yang Sudah Terlihat
 
-### 1. Data Tidak Diakses Langsung dari Controller
-Controller tidak memanipulasi data secara langsung, melainkan lewat service.  
-Ini mengurangi risiko logic bercampur dan akses data yang tidak terkontrol.
+### 1. Akses Data Melalui Service
+
+Controller tidak langsung memanipulasi data, melainkan melalui service layer.
+Pendekatan ini membantu menjaga alur logika tetap terkontrol dan mengurangi risiko penyalahgunaan akses data.
 
 ---
 
 ### 2. Enkapsulasi Data
-Field seperti `productData` di repository dibuat `private`.  
-Walaupun terlihat sepele, ini penting untuk mencegah perubahan data dari luar class.
+
+Field seperti `productData` di repository dibuat `private`.
+Meskipun terlihat sederhana, hal ini penting untuk mencegah modifikasi data secara langsung dari luar class.
 
 ---
 
-## Hal yang Bisa Ditingkatkan
+## Hal yang Masih Bisa Ditingkatkan
 
-- Tambahkan unit test di folder `test` untuk memastikan fitur list, edit, dan delete berjalan sesuai ekspektasi. (hanya untuk bagian sebelum exercise 1)
-- Perjelas tanggung jawab setiap method, terutama saat fitur mulai bertambah.
-- Jaga konsistensi antar layer supaya error seperti `cannot find symbol` bisa dihindari sejak awal.
+* Menambahkan unit test di folder `test` untuk memastikan fitur list, edit, dan delete berjalan sesuai ekspektasi (khusus bagian sebelum exercise 1).
+* Memperjelas tanggung jawab setiap method seiring bertambahnya fitur.
+* Menjaga konsistensi antar layer agar error seperti `cannot find symbol` bisa dihindari sejak awal.
+
+---
+
+# Reflection – Clean Code & Secure Coding Practices Part 2
+
+## 1. Clean Code dan Unit Testing
+
+Setelah menulis unit test, proses awal terasa cukup rumit karena perlu menambahkan banyak kode pengujian. Namun setelah seluruh test berhasil dijalankan, muncul rasa aman saat melakukan refactoring atau menambahkan fitur baru. Unit test membantu memastikan perubahan yang dilakukan tidak merusak fitur yang sudah ada sebelumnya.
+
+Tidak ada jumlah pasti untuk unit test yang harus dibuat. Fokus utama bukan pada banyaknya test, melainkan pada cakupan skenario yang diuji, seperti:
+
+* **Happy path**, ketika input valid
+* **Negative cases**, ketika input tidak valid
+* **Edge cases**, seperti data kosong atau batas nilai tertentu
+
+Code coverage 100% menunjukkan bahwa semua baris kode telah dieksekusi oleh test, tetapi tidak menjamin kode bebas dari bug. Coverage tidak dapat mendeteksi kesalahan logika atau kebutuhan fitur yang belum terimplementasi.
+
+---
+
+## 2. Clean Code pada Functional Testing
+
+Jika functional test baru dibuat dengan cara menyalin setup dari test sebelumnya, maka akan terjadi **code duplication** yang melanggar prinsip DRY (*Don't Repeat Yourself*). Dampaknya adalah kode menjadi sulit dirawat dan perubahan konfigurasi harus dilakukan di banyak tempat.
+
+Pendekatan yang lebih clean adalah membuat **Base Functional Test Class**, misalnya `BaseFunctionalTest`, yang berisi seluruh setup umum seperti konfigurasi port dan inisialisasi server. Test lain cukup mewarisi class tersebut dan fokus pada pengujian fitur masing-masing.
 
 ---
 
 ## Kesimpulan
 
-Mengikuti tutorial ini membantu memahami dasar struktur Spring Boot dan MVC. Namun, ketika fitur bertambah (edit dan delete), terlihat jelas pentingnya konsistensi antar layer dan perencanaan method sejak awal.  
-Kode sudah cukup rapi untuk tahap pembelajaran, tapi masih banyak ruang untuk diperbaiki agar lebih clean, aman, dan siap dikembangkan lebih lanjut.
+Tutorial ini membantu memahami dasar Spring Boot dan pola MVC. Namun saat fitur mulai bertambah, seperti edit dan delete, terlihat jelas pentingnya konsistensi antar layer dan perencanaan method sejak awal.
+Secara keseluruhan, kode sudah cukup rapi untuk tahap pembelajaran, tetapi masih memiliki banyak ruang untuk ditingkatkan agar lebih clean, aman, dan siap dikembangkan lebih lanjut.
