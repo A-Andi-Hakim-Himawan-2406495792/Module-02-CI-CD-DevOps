@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class ProductRepository {
@@ -13,6 +14,8 @@ public class ProductRepository {
     private final List<Product> productData = new ArrayList<>();
 
     public Product create(Product product) {
+        // generate UUID saat create
+        product.setProductId(UUID.randomUUID());
         productData.add(product);
         return product;
     }
@@ -21,7 +24,7 @@ public class ProductRepository {
         return productData.iterator();
     }
 
-    public Product findById(String id) {
+    public Product findById(UUID id) {
         for (Product product : productData) {
             if (product.getProductId().equals(id)) {
                 return product;
@@ -39,7 +42,7 @@ public class ProductRepository {
         }
     }
 
-    public void deleteById(String id) {
+    public void deleteById(UUID id) {
         productData.removeIf(product -> product.getProductId().equals(id));
     }
 }
