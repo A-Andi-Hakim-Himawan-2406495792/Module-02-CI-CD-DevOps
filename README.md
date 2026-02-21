@@ -141,3 +141,25 @@ Pendekatan yang lebih clean adalah membuat **Base Functional Test Class**, misal
 
 Tutorial ini membantu memahami dasar Spring Boot dan pola MVC. Namun saat fitur mulai bertambah, seperti edit dan delete, terlihat jelas pentingnya konsistensi antar layer dan perencanaan method sejak awal.
 Secara keseluruhan, kode sudah cukup rapi untuk tahap pembelajaran, tetapi masih memiliki banyak ruang untuk ditingkatkan agar lebih clean, aman, dan siap dikembangkan lebih lanjut.
+
+
+---
+
+# Reflection – CI/CD & DevOps (Module 02)
+
+## 1. Code Quality Issues yang Diperbaiki
+
+Selama exercise ini, saya menemukan cukup banyak isu kualitas kode yang di-flag oleh PMD, dan hampir semua file test kena—mulai dari `ProductControllerTest.java`, `HomeControllerTest.java`, `CreateProductFunctionalTest.java`, `HomePageFunctionalTest.java`, `ProductTest.java`, `ProductRepositoryTest.java`, `ProductServiceImplTest.java`, sampai `EshopApplicationTest.java`.
+
+Ada tiga jenis *warning* utama yang muncul. Pertama, `JUnitTestsShouldIncludeAssert`—PMD menganggap test yang tidak punya *assertion* eksplisit bukan test yang valid, meskipun saya sudah pakai `.andExpect()` dari `MockMvc` dan `Mockito.verify()`. Untuk kasus seperti ini, saya menambahkan `@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")` karena memang *false positive*—testnya sudah benar secara logika, hanya PMD yang tidak bisa mendeteksinya. Kedua, `JUnitAssertionsShouldIncludeMessage`—setiap *assertion* harus disertai pesan yang menjelaskan konteksnya, misalnya `assertEquals(5, productList.size(), "Product list size should be 5")`. Tujuannya biar kalau CI gagal, pesannya langsung informatif dan gampang di-debug. Ketiga, `JUnitTestContainsTooManyAsserts`—satu test method idealnya hanya menguji satu behavior. Kalau terlalu banyak assert dalam satu method, saya pecah jadi beberapa test yang lebih fokus.
+
+Selain tiga isu PMD tersebut, saya juga sekalian mengganti anotasi `@MockBean` yang sudah *deprecated* menjadi `@MockitoBean`, biar kode tetap *up-to-date* dengan *best practice* Spring Boot versi terbaru.
+
+---
+
+## 2. Implementasi CI/CD
+
+Menurut saya, implementasi GitHub Actions yang ada sudah memenuhi definisi *Continuous Integration* (CI) maupun *Continuous Deployment* (CD). Dari sisi CI, setiap kali saya *push* kode baru atau membuat *pull request*, pipeline otomatis menjalankan seluruh *test suite*, mengukur *code coverage*, serta memindai kualitas dan keamanan kode menggunakan PMD dan OSSF Scorecard—sehingga kode yang bermasalah bisa terdeteksi sebelum sempat masuk ke branch `main`.
+
+Dari sisi CD, saya sudah menghubungkan repository ke PaaS sehingga setiap perubahan yang masuk ke `main` akan otomatis men-*trigger build* Docker dan *deployment* aplikasi tanpa perlu intervensi manual. Dengan begitu, saya benar-benar tidak perlu lagi *build* dan *deploy* dari laptop sendiri setiap kali ada pembaruan.
+
