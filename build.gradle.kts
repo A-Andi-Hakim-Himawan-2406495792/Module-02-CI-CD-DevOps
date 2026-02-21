@@ -1,3 +1,20 @@
+import org.gradle.api.plugins.quality.Pmd
+import org.gradle.api.plugins.quality.PmdExtension
+
+configure<PmdExtension> {
+	toolVersion = "7.0.0-rc4"
+	isConsoleOutput = true
+	isIgnoreFailures = false
+	ruleSets = listOf("category/java/bestpractices.xml")
+}
+
+tasks.withType<Pmd>().configureEach {
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
+}
+
 val seleniumJavaVersion = "4.14.1"
 val seleniumJupiterVersion = "5.0.1"
 val webdrivermanagerVersion = "5.6.3"
@@ -7,6 +24,7 @@ plugins {
 	jacoco
 	id("org.springframework.boot") version "3.5.10"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("pmd")
 }
 
 group = "id.ac.ui.cs.advprog"
@@ -86,6 +104,10 @@ tasks.jacocoTestReport {
 	reports {
 		xml.required.set(true)
 		html.required.set(true)
-	}
+		csv.required.set(false)	}
 }
+jacoco {
+	toolVersion = "0.8.11"
+}
+
 

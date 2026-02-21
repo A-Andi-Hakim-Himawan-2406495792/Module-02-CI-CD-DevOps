@@ -125,4 +125,23 @@ class ProductRepositoryTest {
         Iterator<Product> iterator = productRepository.findAll();
         assertFalse(iterator.hasNext());
     }
+
+    @Test
+    void testFindByIdNotFound() {
+        Product result = productRepository.findById(UUID.randomUUID());
+        assertNull(result);
+    }
+
+    @Test
+    void testUpdateDoesNotCreateNewProduct() {
+        Product product = new Product();
+        product.setProductId(UUID.randomUUID());
+        product.setProductName("Ghost");
+        product.setProductQuantity(1);
+
+        productRepository.update(product);
+
+        assertFalse(productRepository.findAll().hasNext());
+    }
 }
+
