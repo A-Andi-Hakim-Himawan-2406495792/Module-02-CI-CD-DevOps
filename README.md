@@ -1,3 +1,12 @@
+---
+title: Eshop ADPRO
+emoji: 🛒
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
+
 # Reflection – Clean Code & Secure Coding Practices
 
 Refleksi ini ditulis berdasarkan pengalaman mengerjakan tutorial dan exercise **Spring Boot EShop**, khususnya dalam menerapkan prinsip **Clean Code** dan **Secure Coding Practices**.
