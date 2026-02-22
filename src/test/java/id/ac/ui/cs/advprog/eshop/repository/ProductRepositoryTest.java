@@ -102,7 +102,7 @@ class ProductRepositoryTest {
         product.setProductName("Sampo Cap Bambang");
         productRepository.create(product);
         Product foundProduct = productRepository.findById(UUID.randomUUID());
-        assertNull(foundProduct);
+        assertNull(foundProduct, "Product seharusnya bernilai null jika UUID tidak ditemukan di repository");
     }
 
     @Test
@@ -118,7 +118,7 @@ class ProductRepositoryTest {
 
         productRepository.update(nonExistentProduct);
         Product originalProduct = productRepository.findById(product.getProductId());
-        assertEquals("Sampo Cap Bambang", originalProduct.getProductName());
+        assertEquals("Sampo Cap Bambang", originalProduct.getProductName(), "Nama produk tidak boleh berubah jika mencoba update produk yang tidak ada");
     }
 }
 
