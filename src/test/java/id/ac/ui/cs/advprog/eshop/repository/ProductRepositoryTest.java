@@ -94,4 +94,32 @@ class ProductRepositoryTest {
     void findById_notFound_shouldReturnNull() {
         assertNull(productRepository.findById(UUID.randomUUID()), "Unknown ID should return null");
     }
+
+    @Test
+    void testFindByIdNotFound() {
+        Product product = new Product();
+        product.setProductId(UUID.randomUUID());
+        product.setProductName("Sampo Cap Bambang");
+        productRepository.create(product);
+        Product foundProduct = productRepository.findById(UUID.randomUUID());
+        assertNull(foundProduct);
+    }
+
+    @Test
+    void testUpdateNotFound() {
+        Product product = new Product();
+        product.setProductId(UUID.randomUUID());
+        product.setProductName("Sampo Cap Bambang");
+        productRepository.create(product);
+
+        Product nonExistentProduct = new Product();
+        nonExistentProduct.setProductId(UUID.randomUUID());
+        nonExistentProduct.setProductName("Produk Ilegal");
+
+        productRepository.update(nonExistentProduct);
+        Product originalProduct = productRepository.findById(product.getProductId());
+        assertEquals("Sampo Cap Bambang", originalProduct.getProductName());
+    }
 }
+
+
