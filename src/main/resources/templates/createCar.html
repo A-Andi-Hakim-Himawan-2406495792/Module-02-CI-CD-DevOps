@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Car</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f7fa; margin: 0; padding: 0; }
+        header { background-color: #1e90ff; color: white; padding: 20px; text-align: center; }
+        main { padding: 40px; display: flex; justify-content: center; }
+        .card { background-color: white; padding: 30px; width: 400px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+        h2 { text-align: center; margin-bottom: 20px; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
+        .actions { margin-top: 25px; display: flex; justify-content: space-between; align-items: center; }
+        button { padding: 12px 20px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #218838; }
+        .back-link { padding: 12px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; }
+        .back-link:hover { background-color: #5a6268; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>ADV Shop</h1>
+</header>
+
+<main>
+    <div class="card">
+        <h2>Create New Car</h2>
+
+        <form th:action="@{/car/createCar}" th:object="${car}" method="post">
+
+            <label for="nameInput">Car Name</label>
+            <input th:field="*{carName}" type="text" id="nameInput" placeholder="Enter car's name" required>
+
+            <label for="colorInput">Car Color</label>
+            <input th:field="*{carColor}" type="text" id="colorInput" placeholder="Enter car's color" required>
+
+            <label for="quantityInput">Quantity</label>
+            <input th:field="*{carQuantity}" type="number" id="quantityInput" placeholder="Enter car's quantity" min="0" required>
+
+            <div class="actions">
+                <button type="submit">Submit</button>
+                <a class="back-link" th:href="@{/car/listCar}">Back</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>

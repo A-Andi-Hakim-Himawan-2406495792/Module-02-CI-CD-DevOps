@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Car</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f7fa; margin: 0; padding: 0; }
+        header { background-color: #1e90ff; color: white; padding: 20px; text-align: center; }
+        main { padding: 40px; display: flex; justify-content: center; }
+        .card { background-color: white; padding: 30px; width: 400px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+        h2 { text-align: center; margin-bottom: 20px; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
+        .actions { margin-top: 25px; display: flex; justify-content: space-between; align-items: center; }
+        button { padding: 12px 20px; background-color: #1e90ff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #007bff; }
+        .back-link { padding: 12px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; }
+        .back-link:hover { background-color: #5a6268; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>ADV Shop</h1>
+</header>
+
+<main>
+    <div class="card">
+        <h2>Edit Car</h2>
+
+        <form th:action="@{/car/editCar}" method="post" th:object="${car}">
+            <input type="hidden" th:field="*{carId}" />
+
+            <label for="carName">Car Name</label>
+            <input type="text" id="carName" th:field="*{carName}" required>
+
+            <label for="carColor">Car Color</label>
+            <input type="text" id="carColor" th:field="*{carColor}" required>
+
+            <label for="carQuantity">Car Quantity</label>
+            <input type="number" id="carQuantity" th:field="*{carQuantity}" min="0" required>
+
+            <div class="actions">
+                <button type="submit">Save Changes</button>
+                <a class="back-link" th:href="@{/car/listCar}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>
